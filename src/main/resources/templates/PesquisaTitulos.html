@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="https://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="LayoutPadrao">
+<head>
+
+<title>Pesquisa de Título</title>
+
+</head>
+<section layout:fragment="conteudo">
+	<div layout:insert="MensagemExclusao"></div>
+	<div class="card w3-card">
+		<div class="card-header">
+			<div class="clearfix">
+				<h2 class="new-header">Pesquisa de títulos</h2>
+				<a class="btn btn-primary new" href="/titulos/novo" id="newBtn"
+					role="button">Novo Título</a>
+			</div>
+		</div>
+
+		<div class="card-body">
+		
+			<form method="GET" class="form-horizontal">
+				<div class="form-group">
+					<div class="col-sm-4">
+						<div class="input-group">
+							<input class="form-control" placeholder="Pesquisar" autofocus="autofocus" name="descricao">
+							<span class="input-group-btn">
+								<button type="submit" class="btn btn-light">
+									<i class="fas fa-search"></i>
+								</button>
+							</span>
+						</div>
+					</div>
+				</div>
+			</form>
+			
+			<div class="table-responsive">
+			<table class="table table-bordered table-striped">
+				<thead>
+					<tr>
+						<th class="text-center">#</th>
+						<th>Descrição</th>
+						<th class="text-center">Data de Vencimento</th>
+						<th class="text-right">Valor</th>
+						<th class="text-center">Status</th>
+						<th class=""></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="titulo : ${titulos}">
+						<td class="text-center" th:text="${titulo.codigo}"></td>
+						<td th:text="${titulo.descricao}"></td>
+						<td class="text-center" th:text="${{titulo.dataVencimento}}"></td>
+						<td class="text-right" th:text="|R$ ${{titulo.valor}}|"></td>
+						<td class="text-center" th:attr="data-role=${titulo.codigo}"><span class="badge"
+							th:text="${titulo.status.descricao}"
+							th:classappend="${titulo.pendente ? 'badge-danger' : 'badge-success'}">Success</span>
+						</td>
+						<td class="text-center"><a class="btn btn-link btn-xs"
+							th:href="@{/titulos/{codigo}(codigo=${titulo.codigo})}"
+							title="Editar"> <i class="far fa-edit"></i>
+						</a> <a class="btn btn-link btn-xs" data-toggle="modal"
+							data-target="#confirmacaoExclusaoModal"
+							th:attr="data-codigo=${titulo.codigo}, data-descricao=${titulo.descricao}" title="Excluir"> <i
+								class="fas fa-trash-alt"></i>
+						</a> <a class="btn btn-link btn-xs js-atualizar-status"
+							title="Recebido" th:if="${titulo.pendente}"
+							th:href="@{/titulos/{codigo}/receber(codigo=${titulo.codigo})}"
+							th:attr="data-codigo=${titulo.codigo}">
+								<i class="fas fa-check-square"></i>
+						</a></td>
+
+					</tr>
+
+					<tr>
+						<td colspan="6" th:if="${#lists.isEmpty(titulos)}">Nenhum
+							título encontrado</td>
+					</tr>
+				</tbody>
+			</table>
+			</div>
+		</div>
+
+		<div layout:insert="ConfirmacaoExclusao"></div>
+
+	</div>
+</section>
+
+</html>
